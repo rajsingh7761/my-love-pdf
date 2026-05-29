@@ -12,18 +12,19 @@ app.post("/compress", upload.single("pdf"), (req, res) => {
 const input = req.file.path;
 const output = `compressed-${Date.now()}.pdf`;
 
-const level = req.body.level;
-
 let quality = "/ebook";
 
-if (level === "100") quality = "/screen";
-if (level === "200") quality = "/ebook";
-if (level === "500") quality = "/printer";
+if (req.body.level === "100") quality = "/screen";
+if (req.body.level === "200") quality = "/ebook";
+if (req.body.level === "500") quality = "/printer";
 
 const cmd = `gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=${quality} -dNOPAUSE -dQUIET -dBATCH -sOutputFile=${output} ${input}`;
 
 exec(cmd, (err) => {
-if (err) return res.send("Error");
+if (err) {
+console.log(err);
+return res.send("Compression Error ❌");
+}
 
 ```
 res.download(output, () => {
@@ -35,4 +36,6 @@ res.download(output, () => {
 });
 });
 
-app.listen(3000, () => console.log("Running..."));
+// 🔥 IMPORTANT FIX (PORT)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("Running on port " + PORT));
