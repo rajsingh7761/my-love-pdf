@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Love PDF 💖</title>
+
+<style>
+body{
+background:#ffe6f0;
+font-family:Arial;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.box{
+background:#fff;
+padding:25px;
+border-radius:15px;
+text-align:center;
+width:300px;
+}
+
+input,select,button{
+width:100%;
+margin-top:10px;
+padding:10px;
+border-radius:8px;
+}
+
+button{
+background:pink;
+border:none;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+<h2>My Love PDF 💖</h2>
+
+<form id="form">
+<input type="file" name="pdf" required>
+
+<select name="level">
+<option value="100">~100KB</option>
+<option value="200">~200KB</option>
+<option value="500">~500KB</option>
+</select>
+
+<button type="submit">Compress</button>
+
+</form>
+
+<p id="status"></p>
+</div>
+
+<script>
+document.getElementById("form").onsubmit = async function(e){
+e.preventDefault();
+
+const data = new FormData(this);
+
+document.getElementById("status").innerText="Processing...";
+
+const res = await fetch("/compress", {
+method:"POST",
+body:data
+});
+
+if(res.ok){
+const blob = await res.blob();
+const url = URL.createObjectURL(blob);
+
+const a=document.createElement("a");
+a.href=url;
+a.download="MyLovePDF.pdf";
+a.click();
+
+document.getElementById("status").innerText="Done ✅";
+}else{
+document.getElementById("status").innerText="Error ❌";
+}
+}
+</script>
+
+</body>
+</html>
